@@ -11,8 +11,8 @@ export const changelog = [
 
   {
     date: [2024, 5, 29],
-    name: "Celebrate Android Reality Update",
-    info: `Start of mod development`
+    name: "Start of mod development",
+    info: ``
   },
 
   {
