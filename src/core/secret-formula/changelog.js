@@ -8,6 +8,13 @@ export const changelog = [
    *  @property {function: @return String} info  Text body of information for the entry.
    * }
    */
+
+  {
+    date: [2024, 5, 29],
+    name: "Celebrate Android Reality Update",
+    info: `Start of mod development`
+  },
+
   {
     date: [2024, 5, 2],
     name: "Celebrate Android Reality Update",
