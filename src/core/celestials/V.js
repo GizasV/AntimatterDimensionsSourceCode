@@ -176,6 +176,9 @@ export const V = {
   get canUnlockCelestial() {
     return VUnlocks.vAchievementUnlock.canBeUnlocked;
   },
+  get isUnlocked(){
+    return VUnlocks.vAchievementUnlock.isUnlocked;
+  },
   unlockCelestial() {
     player.celestials.v.unlockBits |= (1 << VUnlocks.vAchievementUnlock.id);
     GameUI.notify.success("You have unlocked V, The Celestial Of Achievements!", 10000);

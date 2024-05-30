@@ -4,6 +4,7 @@ import { GameDatabase } from "../secret-formula/game-database";
 import { DC } from "../constants";
 
 import { Quotes } from "./quotes";
+import { TeresaUnlocks } from "./teresa";
 
 export const EFFARIG_STAGES = {
   INFINITY: 1,
@@ -20,6 +21,9 @@ export const Effarig = {
     player.celestials.effarig.run = true;
     recalculateAllGlyphs();
     Tab.reality.glyphs.show(false);
+  },
+  get isUnlocked() {
+    return TeresaUnlocks.effarig.isUnlocked;
   },
   get isRunning() {
     return player.celestials.effarig.run;
