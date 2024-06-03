@@ -168,7 +168,12 @@ export default {
     },
     startRun() {
       if (this.isDoomed) return;
-      Modal.celestials.show({ name: "The Nameless Ones'", number: 2 });
+      if (player.options.confirmations.enterCelestials) {
+        Modal.celestials.show({ name: "The Nameless Ones'", number: 2 });
+      } else {
+        beginProcessReality(getRealityProps(true));
+        Enslaved.initializeRun();
+      }
     },
     hasUnlock(info) {
       return Enslaved.has(info);

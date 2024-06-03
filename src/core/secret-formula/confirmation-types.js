@@ -1,3 +1,5 @@
+import { teresa } from "./celestials/teresa";
+
 export const confirmationTypes = [
   {
     name: "Dimension Boost",
@@ -82,6 +84,10 @@ export const confirmationTypes = [
   }, {
     name: "Respec Shop Purchases",
     option: "respecIAP",
-    isUnlocked: () => Cloud.isAvailable
+    isUnlocked: () => Cloud.isAvailable,
+  }, {
+    name: "Celestial Reality",
+    option: "enterCelestials",
+    isUnlocked: () => Teresa.isUnlocked,
   }
 ];

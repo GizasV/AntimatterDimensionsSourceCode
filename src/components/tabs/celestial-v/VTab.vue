@@ -111,7 +111,12 @@ export default {
     },
     startRun() {
       if (this.isDoomed) return;
-      Modal.celestials.show({ name: "V's", number: 3 });
+      if (player.options.confirmations.enterCelestials) {
+        Modal.celestials.show({ name: "V's", number: 3 });
+      } else {
+        beginProcessReality(getRealityProps(true));
+        V.initializeRun();
+      }
     },
     has(info) {
       return info.isUnlocked;

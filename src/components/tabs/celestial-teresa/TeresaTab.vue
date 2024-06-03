@@ -121,7 +121,12 @@ export default {
     },
     startRun() {
       if (this.isDoomed) return;
-      Modal.celestials.show({ name: "Teresa's", number: 0 });
+      if (player.options.confirmations.enterCelestials) {
+        Modal.celestials.show({ name: "Teresa's", number: 0 });
+      } else {
+        beginProcessReality(getRealityProps(true));
+        Teresa.initializeRun();
+      }
     },
     unlockDescriptionHeight(unlockInfo) {
       const maxPrice = TeresaUnlocks[Teresa.lastUnlock].price;

@@ -863,7 +863,8 @@ window.player = {
       antimatterGalaxy: true,
       dimensionBoost: true,
       switchAutomatorMode: true,
-      respecIAP: true
+      respecIAP: true,
+      enterCelestials: true
     },
     awayProgress: {
       antimatter: true,

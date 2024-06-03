@@ -97,7 +97,10 @@ export default {
 </script>
 
 <template>
-  <ModalWrapperChoice @confirm="handleYesClick">
+  <ModalWrapperChoice
+    option="enterCelestials"
+    @confirm="handleYesClick"
+  >
     <template #header>
       {{ topLabel }}
     </template>

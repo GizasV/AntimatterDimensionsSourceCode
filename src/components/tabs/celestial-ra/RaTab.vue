@@ -97,8 +97,13 @@ export default {
       this.memoryBoosts = Ra.memoryBoostResources;
     },
     startRun() {
-      if (this.isDoomed) return;
-      Modal.celestials.show({ name: "Ra's", number: 4 });
+      if (this.isDoomed) return; 
+      if (player.options.confirmations.enterCelestials) {
+        Modal.celestials.show({ name: "Ra's", number: 4 });
+      } else {
+        beginProcessReality(getRealityProps(true));
+        Ra.initializeRun();
+      }
     },
     toggleMode() {
       Ra.toggleMode();

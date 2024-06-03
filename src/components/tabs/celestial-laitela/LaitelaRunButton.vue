@@ -42,7 +42,12 @@ export default {
     },
     startRun() {
       if (this.isDoomed) return;
-      Modal.celestials.show({ name: "Lai'tela's", number: 5 });
+      if (player.options.confirmations.enterCelestials) {
+        Modal.celestials.show({ name: "Lai'tela's", number: 5 });
+      } else {
+        beginProcessReality(getRealityProps(true));
+        Laitela.initializeRun();
+      }
     },
     classObject() {
       return {

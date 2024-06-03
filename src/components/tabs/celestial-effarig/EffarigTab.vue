@@ -85,7 +85,12 @@ export default {
     },
     startRun() {
       if (this.isDoomed) return;
-      Modal.celestials.show({ name: "Effarig's", number: 1 });
+      if (player.options.confirmations.enterCelestials) {
+        Modal.celestials.show({ name: "Effarig's", number: 1 });
+      } else {
+        beginProcessReality(getRealityProps(true));
+        Effarig.initializeRun();
+      }
     },
     createCursedGlyph() {
       Glyphs.giveCursedGlyph();
