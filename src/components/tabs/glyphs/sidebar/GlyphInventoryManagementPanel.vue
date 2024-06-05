@@ -3,6 +3,7 @@ import GlyphAutosortButtonGroup from "./GlyphAutosortButtonGroup";
 import GlyphCleanButtonGroup from "./GlyphCleanButtonGroup";
 import GlyphProtectedRowButtonGroup from "./GlyphProtectedRowButtonGroup";
 import GlyphSortButtonGroup from "./GlyphSortButtonGroup";
+import GlyphGiveButtonGroup from "./GlyphGiveButtonGroup";
 
 export default {
   name: "GlyphInventoryManagementPanel",
@@ -10,7 +11,8 @@ export default {
     GlyphSortButtonGroup,
     GlyphProtectedRowButtonGroup,
     GlyphAutosortButtonGroup,
-    GlyphCleanButtonGroup
+    GlyphCleanButtonGroup,
+    GlyphGiveButtonGroup
   },
   props: {
     hasMoreOptions: {
@@ -39,6 +41,7 @@ export default {
     <GlyphProtectedRowButtonGroup />
     <GlyphAutosortButtonGroup />
     <GlyphCleanButtonGroup />
+    <GlyphGiveButtonGroup />
   </div>
 </template>
 
