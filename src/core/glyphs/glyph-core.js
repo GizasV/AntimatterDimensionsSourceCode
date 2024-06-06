@@ -810,6 +810,29 @@ export const Glyphs = {
       this.addToInventory(GlyphGenerator.cursedGlyph());
       GameUI.notify.error("Created a Cursed Glyph");
     }
+  },
+  giveRealityGlyph() {
+    if (AlchemyResource.reality.amount < 1) {
+      GameUI.notify.error(`Reality Glyph level must be higher than ${formatInt(0)} `);
+      return;
+    }
+    if (GameCache.glyphInventorySpace.value === 0) {
+      Modal.message.show("No available inventory space; Sacrifice some Glyphs to free up space.",
+        { closeEvent: GAME_EVENT.GLYPHS_CHANGED });
+      return;
+    }
+    this.addToInventory(GlyphGenerator.realityGlyph(AlchemyResource.reality.amount));
+    AlchemyResource.reality.amount = 0;
+    player.reality.glyphs.createdRealityGlyph = true;
+  },
+  autoGiveCursedGlyph() {// a copy of giveCursedGlyph without the notifi and on a loop
+    let cursedCount = this.allGlyphs.countWhere(g => g.type === "cursed");
+    for (let i = 0; i < this.activeSlotCount; i++) {
+      cursedCount = this.allGlyphs.countWhere(g => g.type === "cursed");
+      if ((cursedCount < this.activeSlotCount) && (GameCache.glyphInventorySpace.value > 0)) {
+        this.addToInventory(GlyphGenerator.cursedGlyph());
+      }else return;
+    }
   }
 };
 

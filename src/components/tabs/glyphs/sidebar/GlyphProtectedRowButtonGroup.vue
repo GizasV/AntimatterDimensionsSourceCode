@@ -56,37 +56,21 @@ export default {
 <template>
   <div class="o-glyph-inventory-management-group">
     <div class="l-glyph-sacrifice-options__header">
-      <div
-        v-tooltip="questionMarkTooltip"
-        class="o-questionmark"
-      >
+      <div v-tooltip="questionMarkTooltip" class="o-questionmark">
         ?
       </div>
       Protected Slots: ({{ quantifyInt("row", protectedRows) }})
     </div>
-    <button
-      :class="addRowButtonClass()"
-      @click="addRow"
-    >
+    <button :class="addRowButtonClass()" @click="addRow">
       Add a protected row
-      <div
-        v-if="isProtectedRowsMax()"
-        class="c-glyph-inventory-option__tooltip"
-      >
+      <div v-if="isProtectedRowsMax()" class="c-glyph-inventory-option__tooltip">
         One row is permanently un-protected for new Glyphs
       </div>
     </button>
-    <button
-      :class="removeRowButtonClass()"
-      @click="removeRow"
-    >
+    <button :class="removeRowButtonClass()" @click="removeRow">
       Remove a protected row
     </button>
-    <ToggleButton
-      v-model="moveGlyphs"
-      class="c-glyph-inventory-option"
-      label="Move Glyphs on changing row count:"
-    />
+    <ToggleButton v-model="moveGlyphs" class="c-glyph-inventory-option" label="Move Glyphs on changing row count:" />
   </div>
 </template>
 

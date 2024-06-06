@@ -166,6 +166,7 @@ export const GlyphSacrificeHandler = {
         for (let i = 0; i <= 20; i++) {
           AlchemyResource.all[i].amount = 0;
         }
+        Glyphs.removeFromInventory(glyph);
         return;
       }
 

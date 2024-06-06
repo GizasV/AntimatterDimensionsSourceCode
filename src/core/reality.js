@@ -395,6 +395,7 @@ export function beginProcessReality(realityProps) {
         GlyphSelection.select(Math.floor(Math.random() * GlyphSelection.choiceCount), false);
       }
     }
+    if (player.reality.autoCursedGlyph) Glyphs.autoGiveCursedGlyph();
     Glyphs.processSortingAfterReality();
     return;
   }
@@ -579,6 +580,7 @@ export function beginProcessReality(realityProps) {
       },
       progress
     });
+  if (player.reality.autoCursedGlyph) Glyphs.autoGiveCursedGlyph();
   Glyphs.processSortingAfterReality();
 }
 

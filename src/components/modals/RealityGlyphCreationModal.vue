@@ -28,14 +28,7 @@ export default {
         .map(cfg => [realityGlyphEffectLevelThresholds[cfg.bitmaskIndex - minRealityEffectIndex], cfg.id]);
     },
     createRealityGlyph() {
-      if (GameCache.glyphInventorySpace.value === 0) {
-        Modal.message.show("No available inventory space; Sacrifice some Glyphs to free up space.",
-          { closeEvent: GAME_EVENT.GLYPHS_CHANGED });
-        return;
-      }
-      Glyphs.addToInventory(GlyphGenerator.realityGlyph(this.realityGlyphLevel));
-      AlchemyResource.reality.amount = 0;
-      player.reality.glyphs.createdRealityGlyph = true;
+      Glyphs.giveRealityGlyph();
       this.emitClose();
     },
     formatGlyphEffect(effect) {

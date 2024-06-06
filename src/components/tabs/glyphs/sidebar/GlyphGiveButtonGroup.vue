@@ -18,18 +18,7 @@ export default {
             this.availableGlyphs = (this.vIsFlipped || this.realityGlyphUnlocked)
         },
         createRealityGlyph() {
-            if (this.realityGlyphLevel < 1){
-                GameUI.notify.error(`Reality Glyph level must be higher than ${formatInt(0)} `);
-                return;
-            }
-            if (GameCache.glyphInventorySpace.value === 0) {
-                Modal.message.show("No available inventory space; Sacrifice some Glyphs to free up space.",
-                    { closeEvent: GAME_EVENT.GLYPHS_CHANGED });
-                return;
-            }
-            Glyphs.addToInventory(GlyphGenerator.realityGlyph(this.realityGlyphLevel));
-            AlchemyResource.reality.amount = 0;
-            player.reality.glyphs.createdRealityGlyph = true;
+            Glyphs.giveRealityGlyph()
         },
         createCursedGlyph() {
             Glyphs.giveCursedGlyph();
@@ -39,35 +28,25 @@ export default {
 </script>
 
 <template>
-    <div class="o-glyph-inventory-management-group" >
-            <div class="l-glyph-sacrifice-options__header"
-            v-if="availableGlyphs"
-            >
-                Create Glyphs:
-            </div>
-        <button class="c-glyph-inventory-option  l-cursed-glyph-creation"
-          v-if="vIsFlipped"
-          @click="createCursedGlyph"
-        >
+    <div class="o-glyph-inventory-management-group">
+        <div class="l-glyph-sacrifice-options__header" v-if="availableGlyphs">
+            Create Glyphs:
+        </div>
+        <button class="c-glyph-inventory-option  l-cursed-glyph-creation" v-if="vIsFlipped" @click="createCursedGlyph">
             Create a Cursed Glyph...
         </button>
-        <button class="c-glyph-inventory-option  l-Reality-glyph-creation"
-        v-if="realityGlyphUnlocked"
-          @click="createRealityGlyph"
-        >
-            Create a level {{formatInt(realityGlyphLevel)}}<br> Reality Glyph!
+        <button class="c-glyph-inventory-option  l-Reality-glyph-creation" v-if="realityGlyphUnlocked"  @click="createRealityGlyph">
+            Create a level {{ formatInt(realityGlyphLevel) }}<br> Reality Glyph!
         </button>
     </div>
 </template>
 
 <style scoped>
-
 .l-cursed-glyph-creation {
     border-color: var(--color-effarig--base);
 }
 
 .l-Reality-glyph-creation {
-  animation: a-reality-glyph-tooltip-header-cycle 10s infinite;
+    animation: a-reality-glyph-tooltip-header-cycle 10s infinite;
 }
-
 </style>

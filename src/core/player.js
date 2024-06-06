@@ -504,6 +504,8 @@ window.player = {
     respec: false,
     showGlyphSacrifice: false,
     showSidebarPanel: GLYPH_SIDEBAR_MODE.INVENTORY_MANAGEMENT,
+    autoRealityGlyph: false,
+    autoCursedGlyph: false,
     autoSort: 0,
     autoCollapse: false,
     autoAutoClean: false,

@@ -311,7 +311,7 @@ export function getGameSpeedupFactor(effectsToConsider, blackHolesActiveOverride
   let effects;
   if (effectsToConsider === undefined) {
     effects = [GAME_SPEED_EFFECT.FIXED_SPEED, GAME_SPEED_EFFECT.TIME_GLYPH, GAME_SPEED_EFFECT.BLACK_HOLE,
-      GAME_SPEED_EFFECT.TIME_STORAGE, GAME_SPEED_EFFECT.SINGULARITY_MILESTONE, GAME_SPEED_EFFECT.NERFS];
+    GAME_SPEED_EFFECT.TIME_STORAGE, GAME_SPEED_EFFECT.SINGULARITY_MILESTONE, GAME_SPEED_EFFECT.NERFS];
   } else {
     effects = effectsToConsider;
   }
@@ -478,6 +478,13 @@ export function gameLoop(passDiff, options = {}) {
     autoAdjustGlyphWeights();
   }
 
+  // autoRealityGlyph
+  const alcReal = AlchemyResource.reality;
+  if (player.reality.autoRealityGlyph && alcReal.isUnlocked && (alcReal.amount === alcReal.cap) && (GameCache.glyphInventorySpace.value !== 0)) {
+    const totalRealityGlyphs = Glyphs.allGlyphs.countWhere(g => g.type === "reality");
+    if ((totalRealityGlyphs < Glyphs.maxSpecialGlyphs)) Glyphs.giveRealityGlyph();
+  }
+
   // We do these after autobuyers, since it's possible something there might
   // change a multiplier.
   GameCache.antimatterDimensionCommonMultiplier.invalidate();
@@ -502,7 +509,7 @@ export function gameLoop(passDiff, options = {}) {
       // These variables are the actual game speed used and the game speed unaffected by time storage, respectively
       const reducedTimeFactor = getGameSpeedupFactor();
       const totalTimeFactor = getGameSpeedupFactor([GAME_SPEED_EFFECT.FIXED_SPEED, GAME_SPEED_EFFECT.TIME_GLYPH,
-        GAME_SPEED_EFFECT.BLACK_HOLE, GAME_SPEED_EFFECT.SINGULARITY_MILESTONE]);
+      GAME_SPEED_EFFECT.BLACK_HOLE, GAME_SPEED_EFFECT.SINGULARITY_MILESTONE]);
       const amplification = Ra.unlocks.improvedStoredTime.effects.gameTimeAmplification.effectOrDefault(1);
       const beforeStore = player.celestials.enslaved.stored;
       player.celestials.enslaved.stored = Math.clampMax(player.celestials.enslaved.stored +
@@ -631,7 +638,7 @@ export function gameLoop(passDiff, options = {}) {
     if (Tabs.current.isPermanentlyHidden) {
       const tab = Tabs.all.reverse().find(t => !t.isPermanentlyHidden && t.id !== 10);
       if (tab) tab.show(true);
-      else [...Tab.dimensions.subtabs].reverse().find(t => !t.isPermanentlyHidden).show(true);
+      else[...Tab.dimensions.subtabs].reverse().find(t => !t.isPermanentlyHidden).show(true);
     }
 
     if (Tabs.current.subtabs.find(t => t.isOpen).isPermanentlyHidden) {
@@ -1047,7 +1054,7 @@ export function simulateTime(seconds, real, fast) {
   }
 }
 
-window.onload = function() {
+window.onload = function () {
   const supportedBrowser = browserCheck();
   GameUI.initialized = supportedBrowser;
   ui.view.initialized = supportedBrowser;
@@ -1062,11 +1069,11 @@ window.onload = function() {
   }
 };
 
-window.onfocus = function() {
+window.onfocus = function () {
   setShiftKey(false);
 };
 
-window.onblur = function() {
+window.onblur = function () {
   GameKeyboard.stopSpins();
 };
 
