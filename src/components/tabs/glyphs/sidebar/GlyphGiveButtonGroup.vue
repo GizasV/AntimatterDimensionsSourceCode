@@ -18,7 +18,7 @@ export default {
             this.availableGlyphs = (this.vIsFlipped || this.realityGlyphUnlocked)
         },
         createRealityGlyph() {
-            if (this.realityGlyphLevel === 0){
+            if (this.realityGlyphLevel < 1){
                 GameUI.notify.error(`Reality Glyph level must be higher than ${formatInt(0)} `);
                 return;
             }
@@ -55,7 +55,7 @@ export default {
         v-if="realityGlyphUnlocked"
           @click="createRealityGlyph"
         >
-            Create a level {{realityGlyphLevel }}<br> Reality Glyph!
+            Create a level {{formatInt(realityGlyphLevel)}}<br> Reality Glyph!
         </button>
     </div>
 </template>
