@@ -84,8 +84,7 @@ export const GlyphSacrificeHandler = {
     const glyphActualValue = this.glyphRawRefinementGain(glyph);
     const amountUntilCap = this.glyphEffectiveCap(glyph) - resource.amount;
     const amountToGain = Math.clamp(amountUntilCap, 0, glyphActualValue)
-    // if not checked reality can have (0 < amount < 1) and we dont want that 
-    if (glyph.type === "reality") return (amountToGain < 1 ? 0 : amountToGain);
+    if (glyph.type === "reality") return Math.floor(amountToGain);
     if (!Ra.unlocks.unlockGlyphAlchemy.canBeApplied || !generatedTypes.includes(glyph.type) || !resource.isUnlocked) return 0;
     if (resource.cap === 0) return glyphActualValue;
     return amountToGain;
