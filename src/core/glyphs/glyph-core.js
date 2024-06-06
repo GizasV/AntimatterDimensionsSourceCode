@@ -70,6 +70,9 @@ export const Glyphs = {
     }
     return 3 + Effects.sum(RealityUpgrade(9), RealityUpgrade(24));
   },
+  get maxSpecialGlyphs() {// effarig/reality glyph amount
+    return 1
+  },
   get protectedSlots() {
     return 10 * player.reality.glyphs.protectedRows;
   },
@@ -292,13 +295,21 @@ export const Glyphs = {
     if (this.findByInventoryIndex(glyph.idx) !== glyph) {
       throw new Error("Inconsistent inventory indexing");
     }
-    let sameSpecialTypeIndex = -1;
+    let sameSpecialTypeNum = 0;
+    let sameSpecialTypeIndexArray = [];
+
     if (["effarig", "reality"].includes(glyph.type)) {
-      sameSpecialTypeIndex = this.active.findIndex(x => x && x.type === glyph.type);
+      for (let i = 0; i < this.activeSlotCount; i++) {
+        if (Glyphs.active[i] !== null && Glyphs.active[i].type === glyph.type) {
+          sameSpecialTypeNum++;
+          sameSpecialTypeIndexArray.push(i)
+        }
+      }
     }
+
     if (this.active[targetSlot] === null) {
-      if (sameSpecialTypeIndex >= 0) {
-        Modal.message.show(`You may only have one ${glyph.type.capitalize()} Glyph equipped!`,
+      if (sameSpecialTypeNum >= this.maxSpecialGlyphs) {
+        Modal.message.show(`You may only have ${this.maxSpecialGlyphs} ${glyph.type.capitalize()} Glyph${this.maxSpecialGlyphs > 1 ? "s" : ""} equipped!`,
           { closeEvent: GAME_EVENT.GLYPHS_CHANGED });
         return;
       }
@@ -314,16 +325,22 @@ export const Glyphs = {
       this.validate();
     } else {
       // We can only replace effarig/reality glyph
-      if (sameSpecialTypeIndex >= 0 && sameSpecialTypeIndex !== targetSlot) {
-        Modal.message.show(`You may only have one ${glyph.type.capitalize()} Glyph equipped!`,
+      let replaceGlyphIndex = true;
+      for (let ind of sameSpecialTypeIndexArray) {
+        if (ind === targetSlot) replaceGlyphIndex = false
+      }
+      if (sameSpecialTypeNum >= this.maxSpecialGlyphs && replaceGlyphIndex) {
+        Modal.message.show(`You may only have ${this.maxSpecialGlyphs} ${glyph.type.capitalize()} Glyph${this.maxSpecialGlyphs > 1 ? "s" : ""} equipped!`,
           { closeEvent: GAME_EVENT.GLYPHS_CHANGED });
         return;
       }
+
       if (!player.options.confirmations.glyphReplace) {
         this.swapIntoActive(glyph, targetSlot);
         return;
       }
       Modal.glyphReplace.show({ targetSlot, inventoryIndex: glyph.idx });
+
     }
     // Loading glyph sets might directly choose glyphs, bypassing the hover-over flag-clearing code
     this.removeVisualFlag("unseen", glyph);
@@ -356,7 +373,7 @@ export const Glyphs = {
       setTimeout(() => Modal.message.show(`${quantifyInt("Glyph", stillEquipped)} could not be unequipped due to lack
         of space. Free up some space in your ${target}${hasOther ? " or switch where you are unequipping to" : ""}
         in order to unequip ${stillEquipped === 1 ? "it" : "them"}.`, { closeEvent: GAME_EVENT.GLYPHS_CHANGED }),
-      50);
+        50);
     }
 
     EventHub.dispatch(GAME_EVENT.GLYPHS_EQUIPPED_CHANGED);
@@ -550,7 +567,7 @@ export const Glyphs = {
         g.id !== glyph.id &&
         (g.level >= glyph.level || g.strength >= glyph.strength) &&
         ((g.effects & glyph.effects) === glyph.effects));
-    let compareThreshold = glyph.type === "effarig" || glyph.type === "reality" ? 1 : 5;
+    let compareThreshold = glyph.type === "effarig" || glyph.type === "reality" ? this.maxSpecialGlyphs : this.activeSlotCount;
     compareThreshold = Math.clampMax(compareThreshold, threshold);
     if (toCompare.length < compareThreshold) return false;
     const comparedEffects = getGlyphEffectsFromBitmask(glyph.effects).filter(x => x.id.startsWith(glyph.type));
@@ -561,8 +578,8 @@ export const Glyphs = {
   // If deleteGlyphs === false, we are running this from the modal and are doing so purely to *count* the number of
   // removed glyphs. In this case, we copy the inventory and run the purge on the copy - we need to be able to remove
   // glyphs as we go, or else the purge logic will be wrong (eg. 7 identical glyphs will all be "worse than 5 others")
-  autoClean(threshold = 5, deleteGlyphs = true) {
-    const isHarsh = threshold < 5;
+  autoClean(threshold = this.activeSlotCount, deleteGlyphs = true) {
+    const isHarsh = threshold < this.activeSlotCount;
     let toBeDeleted = 0;
     const inventoryCopy = deleteGlyphs ? undefined : this.fakePurgeInventory();
     // If the player hasn't unlocked sacrifice yet, prevent them from removing any glyphs.
@@ -728,7 +745,8 @@ export const Glyphs = {
       strength: g.strength,
       effects: g.effects,
       color: g.color,
-      symbol: g.symbol, }))
+      symbol: g.symbol,
+    }))
       .sort((a, b) => b.effects - a.effects);
   },
   // Normal glyph count minus 3 for each cursed glyph, uses 4 instead of 3 in the calculation because cursed glyphs
@@ -786,8 +804,8 @@ export const Glyphs = {
       return;
     }
     const cursedCount = this.allGlyphs.filter(g => g !== null && g.type === "cursed").length;
-    if (cursedCount >= 5) {
-      GameUI.notify.error(`You don't need more than ${format(5)} Cursed Glyphs!`);
+    if (cursedCount >= this.activeSlotCount) {
+      GameUI.notify.error(`You don't need more than ${format(this.activeSlotCount)} Cursed Glyphs!`);
     } else {
       this.addToInventory(GlyphGenerator.cursedGlyph());
       GameUI.notify.error("Created a Cursed Glyph");

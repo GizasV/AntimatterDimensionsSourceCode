@@ -14,7 +14,7 @@ export default {
   },
   computed: {
     threshold() {
-      return this.harsh ? 1 : 5;
+      return this.harsh ? 1 : Glyphs.activeSlotCount;
     },
     extraMessage() {
       if (this.glyphsDeleted === 0) return `This will Purge no Glyphs.`;
@@ -29,7 +29,7 @@ export default {
         of ALL of the effects are worse, then it will be deleted.`;
       return `Purging deletes Glyphs that are strictly worse than other Glyphs, while keeping enough to equip a full
         set with those effects. This behaves like Harsh Purge, except that regular Purge will not delete any given
-        Glyph unless it finds five Glyphs which are better (instead of only one).`;
+        Glyph unless it finds ${formatInt(Glyphs.activeSlotCount)} Glyphs which are better (instead of only one).`;
     },
     topLabel() {
       return `You are about to ${this.harsh ? `Harsh Purge` : `Purge`} your Glyphs`;

@@ -73,10 +73,10 @@ export const Pelle = {
       return;
     }
     Glyphs.harshAutoClean();
-    if (Glyphs.freeInventorySpace < 5) {
+    if (Glyphs.freeInventorySpace < Glyphs.activeSlotCount) {
       Modal.hideAll();
       Modal.message.show(`You must have enough empty unprotected Glyph slots for
-        ${formatInt(5)} additional Glyphs in order to Doom your Reality.`, 1);
+        ${formatInt(Glyphs.activeSlotCount)} additional Glyphs in order to Doom your Reality.`, 1);
       return;
     }
     for (const type of BASIC_GLYPH_TYPES) Glyphs.addToInventory(GlyphGenerator.doomedGlyph(type));
