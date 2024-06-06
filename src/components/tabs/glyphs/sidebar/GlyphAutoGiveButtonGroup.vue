@@ -41,7 +41,7 @@ export default {
             <div class="o-questionmark" v-tooltip="questionMarkTooltip">
                 ?
             </div>
-            Toglle Auto Glyphs:
+            Toggle Auto Glyphs:
         </div>
         <button v-bind:class="{
             'c-glyph-inventory-option l-cursed-glyph-creation-off': !cursedOn,
