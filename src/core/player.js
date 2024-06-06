@@ -434,7 +434,8 @@ window.player = {
         replication: 0,
         dilation: 0,
         effarig: 0,
-        reality: 0
+        reality: 0,
+        cursed: 0
       },
       undo: [],
       sets: new Array(7).fill({

@@ -28,7 +28,8 @@ export default {
     },
     style() {
       if (!this.isColored) return { };
-      const color = GlyphAppearanceHandler.getBorderColor(this.type);
+
+      const color = (this.type === "cursed") ? (Theme.current().isDark() ? "#ffffff" : "#000000" ) : GlyphAppearanceHandler.getBorderColor(this.type);
       const animateReality = this.typeConfig.id === "reality" && !player.reality.glyphs.cosmetics.colorMap.reality;
       return {
         color,

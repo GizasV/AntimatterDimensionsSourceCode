@@ -27,10 +27,13 @@ export default {
       return Glyphs.findByInventoryIndex(this.idx);
     },
     resource() {
-      return GlyphSacrificeHandler.glyphAlchemyResource(this.glyph);
+      return (this.glyph.type !== "cursed") ? GlyphSacrificeHandler.glyphAlchemyResource(this.glyph) : AlchemyResource.all[0];
     },
     resourceName() {
       return this.resource.name;
+    },
+    handleCursed() {
+      return (this.glyph.type === "cursed");
     },
   },
   methods: {
@@ -38,16 +41,13 @@ export default {
       const resource = this.resource;
       this.resourceAmount = resource.amount;
       this.resourceUnlocked = resource.isUnlocked;
-      this.gain = GlyphSacrificeHandler.glyphRefinementGain(this.glyph);
-      this.cap = GlyphSacrificeHandler.glyphEffectiveCap(this.glyph);
-
+      this.gain = (this.glyph.type !== "cursed") ? GlyphSacrificeHandler.glyphRefinementGain(this.glyph) : 0;
+      this.cap = (this.glyph.type !== "cursed") ? GlyphSacrificeHandler.glyphEffectiveCap(this.glyph) : 0;
       this.after = this.resourceAmount + this.gain;
 
       const newGlyph = Glyphs.findByInventoryIndex(this.idx);
       if (this.glyph !== newGlyph && !this.confirmedRefine) {
-
         // Why is confirmedRefine here: refer to SacrificeGlyphModal.vue
-
         this.emitClose();
         Modal.message.show("The selected Glyph changed position or was otherwise changed!");
       }
@@ -69,7 +69,14 @@ export default {
       You are about to refine a Glyph
     </template>
     <div
-      v-if="resourceUnlocked"
+      v-if="handleCursed"
+      class="c-modal-message__text"
+    >
+      Refining a Glyph will remove the Glyph from your inventory, and in return,
+      you will suffer the consequences.
+    </div>
+    <div
+      v-else-if="resourceUnlocked"
       class="c-modal-message__text"
     >
       Refining a Glyph will remove the Glyph from your inventory, and in return,

@@ -23,9 +23,6 @@ export const GlyphSacrificeHandler = {
       case "companion":
         Modal.deleteCompanion.show();
         return true;
-      case "cursed":
-        Glyphs.removeFromInventory(glyph);
-        return true;
     }
     return false;
   },
@@ -43,6 +40,7 @@ export const GlyphSacrificeHandler = {
   glyphSacrificeGain(glyph) {
     if (!this.canSacrifice || Pelle.isDoomed) return 0;
     if (glyph.type === "reality") return 0.01 * glyph.level * Achievement(171).effectOrDefault(1);
+    if (glyph.type === "cursed") return 0.01 * glyph.level * Achievement(171).effectOrDefault(1);
     const pre10kFactor = Math.pow(Math.clampMax(glyph.level, 10000) + 10, 2.5);
     const post10kFactor = 1 + Math.clampMin(glyph.level - 10000, 0) / 100;
     const power = Ra.unlocks.maxGlyphRarityAndShardSacrificeBoost.effectOrDefault(1);
@@ -81,13 +79,16 @@ export const GlyphSacrificeHandler = {
     return this.glyphRefinementEfficiency * glyphMaxValue * rarityModifier;
   },
   glyphRefinementGain(glyph) {
-    if (!Ra.unlocks.unlockGlyphAlchemy.canBeApplied || !generatedTypes.includes(glyph.type)) return 0;
+
     const resource = this.glyphAlchemyResource(glyph);
-    if (!resource.isUnlocked) return 0;
     const glyphActualValue = this.glyphRawRefinementGain(glyph);
-    if (resource.cap === 0) return glyphActualValue;
     const amountUntilCap = this.glyphEffectiveCap(glyph) - resource.amount;
-    return Math.clamp(amountUntilCap, 0, glyphActualValue);
+    const amountToGain = Math.clamp(amountUntilCap, 0, glyphActualValue)
+    // if not checked reality can have (0 < amount < 1) and we dont want that 
+    if (glyph.type === "reality") return (amountToGain < 1 ? 0 : amountToGain);
+    if (!Ra.unlocks.unlockGlyphAlchemy.canBeApplied || !generatedTypes.includes(glyph.type) || !resource.isUnlocked) return 0;
+    if (resource.cap === 0) return glyphActualValue;
+    return amountToGain;
   },
   // The glyph that is being refined can increase the cap, which means the effective cap
   // will be the current resource cap or the cap after this glyph is refined, whichever is higher.
@@ -101,18 +102,43 @@ export const GlyphSacrificeHandler = {
   highestRefinementValue(glyph) {
     return this.glyphRawRefinementGain(glyph) / this.glyphRefinementEfficiency;
   },
+  rng(max = 21, min = 0) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  },
   attemptRefineGlyph(glyph, force) {
-    if (glyph.type === "reality") return;
     if (glyph.type === "cursed") {
-      Glyphs.removeFromInventory(glyph);
+      let totalResourceAmount = 0;
+      for (let i = 0; i <= 20; i++)  totalResourceAmount += AlchemyResource.all[i].amount;
+      if (totalResourceAmount <= 0) {// may change the sac threshold
+        this.sacrificeGlyph(glyph, force);
+        return;
+      }
+      if (!player.options.confirmations.glyphRefine || force) {
+        this.refineGlyph(glyph);
+        return;
+      }
+      Modal.glyphRefine.show({
+        idx: glyph.idx,
+        resourceName: AlchemyResource.all[0].name,
+        resourceAmount: AlchemyResource.all[0].amount,
+        gain: 0,
+        cap: AlchemyResource.all[0].cap
+      });
       return;
     }
-    const decoherence = AlchemyResource.decoherence.isUnlocked;
-    if (!Ra.unlocks.unlockGlyphAlchemy.canBeApplied ||
+    if (glyph.type === "reality") {
+      if ((this.glyphRefinementGain(glyph) === 0) && (AlchemyResources.base.every(x => x.data.amount >= Ra.alchemyResourceCap))) {
+        this.sacrificeGlyph(glyph, force);
+        return;
+      }
+    } else {
+      const decoherence = AlchemyResource.decoherence.isUnlocked;
+      if (!Ra.unlocks.unlockGlyphAlchemy.canBeApplied ||
         (this.glyphRefinementGain(glyph) === 0 && !decoherence) ||
         (decoherence && AlchemyResources.base.every(x => x.data.amount >= Ra.alchemyResourceCap))) {
-      this.sacrificeGlyph(glyph, force);
-      return;
+        this.sacrificeGlyph(glyph, force);
+        return;
+      }
     }
 
     if (!player.options.confirmations.glyphRefine || force) {
@@ -131,6 +157,39 @@ export const GlyphSacrificeHandler = {
   },
   refineGlyph(glyph) {
     if (Pelle.isDoomed) return;
+    if (glyph.type === "cursed") {
+      const totalResourcesUnlocked = Ra.pets.effarig.level <= 21 ? (Ra.pets.effarig.level - 1) : (Ra.pets.effarig.level === 25 ? 21 : 20);
+      const currentResourceCapDesimalized = (AlchemyResource.all[20].cap * totalResourcesUnlocked) / (25000 * 21);
+      const curse = Math.floor(66666 * currentResourceCapDesimalized);
+      let totalResourceAmount = 0;
+      for (let i = 0; i <= 20; i++)  totalResourceAmount += AlchemyResource.all[i].amount;
+      if (totalResourceAmount <= curse) {
+        for (let i = 0; i <= 20; i++) {
+          AlchemyResource.all[i].amount = 0;
+        }
+        return;
+      }
+
+      let remainingCurse = curse;
+      let rngResourse;
+      let randAmount;
+      while (remainingCurse > 0) {
+        rngResourse = AlchemyResource.all[this.rng()];
+        randAmount = this.rng(curse / 7);
+        if ((remainingCurse <= randAmount) && (remainingCurse <= rngResourse.amount)) {
+          rngResourse.amount -= remainingCurse;
+          remainingCurse = 0;
+        } else if ((rngResourse.amount <= randAmount) && (rngResourse.amount <= remainingCurse)) {
+          remainingCurse -= rngResourse.amount
+          rngResourse.amount = 0
+        } else if ((randAmount <= rngResourse.amount) && (randAmount <= rngResourse.amount)) {
+          rngResourse.amount -= randAmount;
+          remainingCurse -= randAmount;
+        }
+      }
+      Glyphs.removeFromInventory(glyph);
+      return;
+    }
     const resource = this.glyphAlchemyResource(glyph);
     // This technically completely trashes the glyph for no rewards if not unlocked, but this will only happen ever
     // if the player specificially tries to do so (in which case they're made aware that it's useless) or if the

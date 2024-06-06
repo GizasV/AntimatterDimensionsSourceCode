@@ -20,7 +20,7 @@ export default {
     };
   },
   computed: {
-    types: () => GLYPH_TYPES.filter(type => type !== "cursed" && type !== "companion"),
+    types: () => GLYPH_TYPES.filter(type => type !== "companion"),
     lastMachines() {
       return this.lastMachinesTeresa.lt(DC.E10000)
         ? `${quantify("Reality Machine", this.lastMachinesTeresa, 2)}`
@@ -53,6 +53,12 @@ export default {
     },
     hasSeenRealityGlyph() {
       return player.reality.glyphs.createdRealityGlyph;
+    },
+    hasSeenCursedGlyph() {
+      return V.isFlipped;
+    },
+    hasSeenCursedAndReality() {
+      return (V.isFlipped && player.reality.glyphs.createdRealityGlyph); 
     }
   },
   created() {
@@ -163,7 +169,13 @@ export default {
       <div v-if="teresaMult > 1">
         Glyph sacrifice values are multiplied by {{ formatX(teresaMult, 2, 2) }};
         Teresa was last done at {{ lastMachines }}.
-        <span v-if="hasSeenRealityGlyph">
+        <span v-if="hasSeenCursedAndReality"> 
+          Reality and Cursed Glyphs are unaffected by this multiplier and have no altered effects.
+        </span>
+        <span v-else-if="hasSeenCursedGlyph"> 
+          Cursed Glyphs are unaffected by this multiplier and have no altered effects.
+        </span>
+        <span v-else-if="hasSeenRealityGlyph"> 
           Reality Glyphs are unaffected by this multiplier and have no altered effects.
         </span>
       </div>

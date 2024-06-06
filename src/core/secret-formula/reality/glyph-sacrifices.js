@@ -90,9 +90,22 @@ export const glyphSacrifice = {
       if (Pelle.isDisabled("glyphsac")) return 0;
       const sac = player.reality.glyphs.sac.reality + (added ?? 0);
       // This cap is only feasibly reached with the imaginary upgrade, but we still want to cap it at a nice number
-      return Math.clampMax(1 + Math.sqrt(sac) / 15, 100);
+      const capped = Math.clampMax(sac, GlyphSacrificeHandler.maxSacrificeForEffects);
+      return Math.clampMax(1 + Math.sqrt(capped) / 15, 100);
     },
     description: amount => `Multiply Memory Chunk gain by ${formatX(amount, 2, 3)}`,
+    cap: () => GlyphSacrificeHandler.maxSacrificeForEffects
+  },
+  "cursed": {
+    id: "cursed",
+    effect: added => {
+      if (Pelle.isDisabled("glyphsac")) return 0;
+      const sac = ((player.reality.glyphs.sac.cursed)  )+ (added ?? 0);
+      const capped = Math.clampMax(sac, GlyphSacrificeHandler.maxSacrificeForEffects);
+
+      return capped; // the effect is not spesified here , you just give its value here
+    },
+    description: amount => `Cursed description ${formatInt(amount)}`,
     cap: () => GlyphSacrificeHandler.maxSacrificeForEffects
   }
 };
