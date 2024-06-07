@@ -265,8 +265,8 @@ export const imaginaryUpgrades = [
     checkRequirement: () => Effarig.isRunning && player.requirementChecks.reality.maxGlyphs < -10 &&
       Currency.antimatter.value.exponent >= 1.5e11,
     checkEvent: GAME_EVENT.GAME_TICK_AFTER,
-    description: () => `All Glyph Sacrifice totals are increased to ${format(1e100)}`,
-    effect: 1e100,
+    description: () => `Improve the effects of Relic Shards`,
+    effect: 2.1,
     isDisabledInDoomed: true
   },
   {
