@@ -826,9 +826,9 @@ export const Glyphs = {
     player.reality.glyphs.createdRealityGlyph = true;
   },
   autoGiveCursedGlyph() {// a copy of giveCursedGlyph without the notifi and on a loop
-    let cursedCount = this.allGlyphs.countWhere(g => g.type === "cursed");
+    let cursedCount = this.allGlyphs.countWhere(g => g !== null && g.type === "cursed");
     for (let i = 0; i < this.activeSlotCount; i++) {
-      cursedCount = this.allGlyphs.countWhere(g => g.type === "cursed");
+      cursedCount = this.allGlyphs.countWhere(g => g !== null && g.type === "cursed");
       if ((cursedCount < this.activeSlotCount) && (GameCache.glyphInventorySpace.value > 0)) {
         this.addToInventory(GlyphGenerator.cursedGlyph());
       }else return;
