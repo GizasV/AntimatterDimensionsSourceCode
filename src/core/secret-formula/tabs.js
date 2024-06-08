@@ -484,7 +484,7 @@ export const tabs = [
     name: "Shop",
     newUIClass: "shop",
     hideAt: 1.5,
-    condition: () => true,//reminder to disable when/if i change S33
+    condition: () => false,
     id: 10,
     hidable: true,
     subtabs: [

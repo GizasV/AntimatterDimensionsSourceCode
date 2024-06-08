@@ -117,8 +117,8 @@ export const secretAchievements = [
   },
   {
     id: 33,
-    name: "A sound financial decision",
-    description: "Click on the button to purchase STD coins."
+    name: "Well that was a waste",
+    description: "Refine a reality glyph to gain reality alchemy resource.)"
   },
   {
     id: 34,

@@ -55,6 +55,7 @@ export default {
     handleYesClick() {
       this.confirmedRefine = true;
       GlyphSacrificeHandler.refineGlyph(this.glyph);
+      if (this.glyph.type === "reality") SecretAchievement(33).unlock();
     },
   },
 };

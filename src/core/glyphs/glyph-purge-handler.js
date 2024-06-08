@@ -142,6 +142,7 @@ export const GlyphSacrificeHandler = {
 
     if (!player.options.confirmations.glyphRefine || force) {
       this.refineGlyph(glyph);
+      if (glyph.type === "reality") SecretAchievement(33).unlock();
       return;
     }
     const resource = this.glyphAlchemyResource(glyph);
