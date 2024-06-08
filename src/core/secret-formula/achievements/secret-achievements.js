@@ -118,7 +118,7 @@ export const secretAchievements = [
   {
     id: 33,
     name: "Well that was a waste",
-    description: "Refine a reality glyph to gain reality alchemy resource.)"
+    description: "Refine a reality glyph to gain reality alchemy resource."
   },
   {
     id: 34,
